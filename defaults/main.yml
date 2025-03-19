@@ -6,7 +6,7 @@ dnsmasq_packages:
 
 dnsmasq_extra_packages: []
 
-# dnsmasq service options
+# dnsmasq service parameters
 dnsmasq_service_name: dnsmasq
 dnsmasq_service_manage: true
 dnsmasq_service_state: started
@@ -32,7 +32,7 @@ dnsmasq_dnsmasq_d_hosts_config_filename: /etc/dnsmasq.d/90-hosts.conf
 # create configuration file at location defined in 'dnsmasq_dnsmasq_d_hosts_config_filename' variable
 # /etc/dnsmasq.d/90-hosts.conf by default
 # with all hosts files with 'state: present' referenced via 'addn-hosts' i.e.
-# addn-hosts=/etc/dnsmasq.d/hosts
+# addn-hosts=/etc/dnsmasq.d/hosts/mydomain.tld.hosts
 dnsmasq_dnsmasq_d_hosts_config_create: true
 
 # check Debian specific variables in vars/Debian.yml file
