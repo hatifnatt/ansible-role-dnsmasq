@@ -1,0 +1,81 @@
+---
+
+- name: Dnsmasq | Load OS-specific vars
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+        - '{{ ansible_distribution }}.yml'
+        - '{{ ansible_os_family }}.yml'
+        - main.yml
+      paths:
+        - 'vars'
+
+# Install main packages
+# TODO Pin (hold) version?
+- name: Dnsmasq | Install packages
+  ansible.builtin.package:
+    name: "{{ dnsmasq_packages }}"
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags:
+    - install
+    - dnsmasq
+    - dnsmasq-install
+
+# Install extra packages
+- name: Dnsmasq | Install extra packages
+  ansible.builtin.package:
+    name: "{{ dnsmasq_extra_packages }}"
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags:
+    - install
+    - dnsmasq
+    - dnsmasq-install
+  when: dnsmasq_extra_packages
+
+- name: Dnsmasq | Include OS-specific tasks
+  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
+  when: ansible_os_family in ['Debian']
+
+- name: Dnsmasq | Include config tasks
+  ansible.builtin.include_tasks: "config.yml"
+  tags:
+    - config
+    - dnsmasq
+    - dnsmasq-config
+
+- name: Dnsmasq | Include hosts tasks
+  ansible.builtin.include_tasks: "hosts.yml"
+  tags:
+    - config
+    - hosts
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-hosts
+
+# Manage systemd-resolved service
+- name: Dnsmasq | Manage systemd-resolved service
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: "{{ dnsmasq_systemd_resolved_state }}"
+    enabled: "{{ dnsmasq_systemd_resolved_enabled }}"
+  when: dnsmasq_systemd_resolved_manage | bool
+  tags:
+    - configuration
+    - dnsmasq
+    - dnsmasq-stop-disable-service
+
+# Enable and start dnsmasq service
+- name: Dnsmasq | Manage system service
+  ansible.builtin.service:
+    name: "{{ dnsmasq_service_name }}"
+    state: "{{ dnsmasq_service_state }}"
+    enabled: "{{ dnsmasq_service_enabled | bool }}"
+  when: dnsmasq_service_manage | bool
+  tags:
+    - config
+    - service
+    - dnsmasq
+    - dnsmasq-service

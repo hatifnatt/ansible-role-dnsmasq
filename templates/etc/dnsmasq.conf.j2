@@ -1,0 +1,9 @@
+{{ ansible_managed | comment }}
+# For details about configuration options check out
+# Debian: /usr/share/doc/dnsmasq-base/examples/dnsmasq.conf.example
+# Web: https://thekelleys.org.uk/dnsmasq/docs/dnsmasq-man.html
+# For extra configuration files check /etc/dnsmasq.d/ directory
+
+{% for line in dnsmasq_conf | default([]) %}
+{{ line }}
+{% endfor %}

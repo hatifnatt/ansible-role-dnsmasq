@@ -1,0 +1,62 @@
+# This file has six functions:
+# 1) to completely disable starting this dnsmasq instance
+# 2) to set DOMAIN_SUFFIX by running `dnsdomainname`
+# 3) to select an alternative config file
+#    by setting DNSMASQ_OPTS to --conf-file=<file>
+# 4) to tell dnsmasq to read the files in /etc/dnsmasq.d for
+#    more configuration variables.
+# 5) to stop the resolvconf package from controlling dnsmasq's
+#    idea of which upstream nameservers to use.
+# 6) to avoid using this dnsmasq instance as the system's default resolver
+#    by setting DNSMASQ_EXCEPT="lo"
+# For upgraders from very old versions, all the shell variables set
+# here in previous versions are still honored by the init script
+# so if you just keep your old version of this file nothing will break.
+
+{% if dnsmasq_default_domain_suffix is defined and dnsmasq_default_domain_suffix %}
+DOMAIN_SUFFIX=`{{ dnsmasq_default_domain_suffix }}`
+{% else %}
+#DOMAIN_SUFFIX=`dnsdomainname`
+{% endif %}
+{% if dnsmasq_default_dnsmasq_opts is defined and dnsmasq_default_dnsmasq_opts %}
+DNSMASQ_OPTS="{{ dnsmasq_default_dnsmasq_opts }}"
+{% else %}
+#DNSMASQ_OPTS="--conf-file=/etc/dnsmasq.alt"
+{% endif %}
+
+# The dnsmasq daemon is run by default conforming to the Debian Policy.
+# To disable the service,
+# for SYSV init, use "update-rc.d dnsmasq disable",
+# for systemd, use "systemctl disable dnsmasq".
+
+# By default search this drop directory for configuration options.
+# Libvirt leaves a file here to make the system dnsmasq play nice.
+# Comment out this line if you don't want this. The dpkg-* are file
+# endings which cause dnsmasq to skip that file. This avoids pulling
+# in backups made by dpkg.
+{% if dnsmasq_default_config_dir is defined and dnsmasq_default_config_dir %}
+CONFIG_DIR={{ dnsmasq_default_config_dir }}
+{% else %}
+#CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
+{% endif %}
+
+# If the resolvconf package is installed, dnsmasq will use its output
+# rather than the contents of /etc/resolv.conf to find upstream
+# nameservers. Uncommenting this line inhibits this behaviour.
+# Note that including a "resolv-file=<filename>" line in
+# /etc/dnsmasq.conf is not enough to override resolvconf if it is
+# installed: the line below must be uncommented.
+{% if dnsmasq_default_ignore_resolvconf is defined %}
+IGNORE_RESOLVCONF={{ dnsmasq_default_ignore_resolvconf | bool | ternary('yes', 'no') }}
+{% else %}
+#IGNORE_RESOLVCONF=yes
+{% endif %}
+
+# If the resolvconf package is installed, dnsmasq will tell resolvconf
+# to use dnsmasq under 127.0.0.1 as the system's default resolver.
+# Uncommenting this line inhibits this behaviour.
+{% if dnsmasq_default_dnsmasq_except is defined and dnsmasq_default_dnsmasq_except %}
+DNSMASQ_EXCEPT={{ dnsmasq_default_dnsmasq_except }}
+{% else %}
+#DNSMASQ_EXCEPT="lo"
+{% endif %}

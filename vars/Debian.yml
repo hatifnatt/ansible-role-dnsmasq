@@ -1,0 +1,10 @@
+---
+
+# Options for Debian /etc/default/dnsmasq
+dnsmasq_default_file: /etc/default/dnsmasq
+dnsmasq_default_domain_suffix: ''
+dnsmasq_default_dnsmasq_opts: ''
+# Default value in Debian is /etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
+dnsmasq_default_config_dir: /etc/dnsmasq.d,*.conf
+# dnsmasq_default_ignore_resolvconf: yes
+dnsmasq_default_dnsmasq_except: ''

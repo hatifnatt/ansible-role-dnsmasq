@@ -1,0 +1,15 @@
+---
+
+# Create default file /etc/defaults/dnsmasq
+- name: Dnsmasq | Update Debian default file
+  ansible.builtin.template:
+    src: "{{ dnsmasq_default_file.lstrip('/') }}.j2"
+    dest: "{{ dnsmasq_default_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Dnsmasq restart
+  tags:
+    - config
+    - dnsmasq
+    - dnsmasq-config

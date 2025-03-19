@@ -1,0 +1,56 @@
+---
+
+# Create main config usually /etc/dnsmasq.conf
+- name: Dnsmasq | Update /etc/dnsmasq.conf configuration file
+  ansible.builtin.template:
+    src: "{{ dnsmasq_conf_file.lstrip('/') }}.j2"
+    dest: "{{ dnsmasq_conf_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "dnsmasq --test -C %s"
+  # only update configuration file if some configuration data provided
+  when: dnsmasq_conf
+  notify: Dnsmasq restart
+  tags:
+    - config
+    - dnsmasq
+    - dnsmasq-config
+
+# Create extra configs in /etc/dnsmasq.d/
+- name: Dnsmasq | Create extra configuration files
+  ansible.builtin.template:
+    src: etc/dnsmasq.d/config.j2
+    dest: "/etc/dnsmasq.d/{{ item.key }}"
+    owner: root
+    group: root
+    mode: "0644"
+    validate: 'dnsmasq --test -C %s'
+  with_dict: "{{ dnsmasq_dnsmasq_d_config_files }}"
+  when:
+    - dnsmasq_dnsmasq_d_config_files
+    - item.value
+    - item.value.get('state', 'present')  == 'present'
+  notify: Dnsmasq restart
+  tags:
+    - config
+    - dnsmasq
+    - dnsmasq-config
+
+# Remove configs from /etc/dnsmasq.d/
+- name: Dnsmasq | Remove configuration files
+  ansible.builtin.file:
+    path: "/etc/dnsmasq.d/{{ item.key }}"
+    state: absent
+  with_dict: "{{ dnsmasq_dnsmasq_d_config_files }}"
+  loop_control:
+    label: "key: {{ item.key }}, state: {{ item.value.get('state', 'unset') }}"
+  when:
+    - dnsmasq_dnsmasq_d_config_files
+    - item.value
+    - item.value.get('state', 'present') == 'absent'
+  notify: Dnsmasq restart
+  tags:
+    - config
+    - dnsmasq
+    - dnsmasq-config

@@ -1,0 +1,38 @@
+---
+
+# packages
+dnsmasq_packages:
+  - dnsmasq
+
+dnsmasq_extra_packages: []
+
+# dnsmasq service options
+dnsmasq_service_name: dnsmasq
+dnsmasq_service_manage: true
+dnsmasq_service_state: started
+dnsmasq_service_enabled: true
+dnsmasq_restart_handler_state: restarted
+
+# manage systemd-resolved service
+dnsmasq_systemd_resolved_manage: false
+dnsmasq_systemd_resolved_state: stopped
+dnsmasq_systemd_resolved_enabled: false
+
+# configuration files
+dnsmasq_conf_file: /etc/dnsmasq.conf
+dnsmasq_conf: []
+
+dnsmasq_dnsmasq_d_config_files: {}
+
+# hosts files
+# directory where host files will be created
+dnsmasq_dnsmasq_d_hosts_files_dir: /etc/dnsmasq.d/hosts
+dnsmasq_dnsmasq_d_hosts_files: {}
+dnsmasq_dnsmasq_d_hosts_config_filename: /etc/dnsmasq.d/90-hosts.conf
+# create configuration file at location defined in 'dnsmasq_dnsmasq_d_hosts_config_filename' variable
+# /etc/dnsmasq.d/90-hosts.conf by default
+# with all hosts files with 'state: present' referenced via 'addn-hosts' i.e.
+# addn-hosts=/etc/dnsmasq.d/hosts
+dnsmasq_dnsmasq_d_hosts_config_create: true
+
+# check Debian specific variables in vars/Debian.yml file

@@ -1,0 +1,24 @@
+---
+
+galaxy_info:
+  role_name: dnsmasq
+  author: Hatifnatt
+  description: Setup and configure Dnsmasq
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+        - bookworm
+
+  galaxy_tags:
+    - system
+    - networking
+    - dns
+    - dhcp
+
+dependencies: []
