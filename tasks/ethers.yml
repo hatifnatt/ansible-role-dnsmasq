@@ -1,0 +1,96 @@
+---
+
+# Create directory for ethers files
+# Only when some ethers configuration provided
+- name: Dnsmasq | Create directory for ethers files
+  ansible.builtin.file:
+    path: "{{ dnsmasq_dnsmasq_d_ethers_files_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: dnsmasq_dnsmasq_d_ethers_files
+  tags:
+    - config
+    - ethers
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-ethers
+
+# Create ethers files in /etc/dnsmasq.d/
+- name: Dnsmasq | Create ethers files
+  ansible.builtin.template:
+    src: etc/dnsmasq.d/ethers/ethers.j2
+    dest: "{{ [dnsmasq_dnsmasq_d_ethers_files_dir, item.key] | path_join }}"
+    owner: root
+    group: root
+    mode: "0644"
+  ignore_errors: "{{ ansible_check_mode }}"
+  with_dict: "{{ dnsmasq_dnsmasq_d_ethers_files }}"
+  when:
+    - dnsmasq_dnsmasq_d_ethers_files
+    - item.value
+    - item.value.get('state', 'present')  == 'present'
+  notify: Dnsmasq reload
+  tags:
+    - config
+    - ethers
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-ethers
+
+# Remove ethers files from /etc/dnsmasq.d/
+- name: Dnsmasq | Remove ethers files
+  ansible.builtin.file:
+    path: "{{ [dnsmasq_dnsmasq_d_ethers_files_dir, item.key] | path_join }}"
+    state: absent
+  ignore_errors: "{{ ansible_check_mode }}"
+  with_dict: "{{ dnsmasq_dnsmasq_d_ethers_files }}"
+  loop_control:
+    label: "key: {{ item.key }}, state: {{ item.value.get('state', 'unset') }}"
+  when:
+    - dnsmasq_dnsmasq_d_ethers_files
+    - item.value
+    - item.value.get('state', 'present') == 'absent'
+  notify: Dnsmasq reload
+  tags:
+    - config
+    - ethers
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-ethers
+
+# Create config that will enable use of generated ethers files via 'dhcp-hostsfile' parameter
+- name: Dnsmasq | Create config with all ethers files referenced
+  ansible.builtin.template:
+    src: etc/dnsmasq.d/ethers.conf.j2
+    dest: "{{ dnsmasq_dnsmasq_d_ethers_config_filename }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when:
+    - dnsmasq_dnsmasq_d_ethers_files
+    - dnsmasq_dnsmasq_d_ethers_config_ensure == 'present'
+  notify: Dnsmasq restart
+  tags:
+    - config
+    - ethers
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-ethers
+
+# Remove config file referencing ethers files
+- name: Dnsmasq | Remove config file referencing ethers files
+  ansible.builtin.file:
+    path: "{{ dnsmasq_dnsmasq_d_ethers_config_filename }}"
+    state: absent
+  ignore_errors: "{{ ansible_check_mode }}"
+  when:
+    - dnsmasq_dnsmasq_d_ethers_config_ensure == 'absent'
+  notify: Dnsmasq restart
+  tags:
+    - config
+    - ethers
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-ethers

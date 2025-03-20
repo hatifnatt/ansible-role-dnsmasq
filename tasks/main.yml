@@ -55,6 +55,15 @@
     - dnsmasq-config
     - dnsmasq-hosts
 
+- name: Dnsmasq | Include ethers tasks
+  ansible.builtin.include_tasks: "ethers.yml"
+  tags:
+    - config
+    - ethers
+    - dnsmasq
+    - dnsmasq-config
+    - dnsmasq-ethers
+
 # Manage systemd-resolved service
 - name: Dnsmasq | Manage systemd-resolved service
   ansible.builtin.service:

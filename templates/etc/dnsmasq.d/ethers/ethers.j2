@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+# Check dnsmasq dhcp-host parameter to know more about format of the records
+
+{% for line in item.value.records | default([]) %}
+{{ line }}
+{% endfor %}

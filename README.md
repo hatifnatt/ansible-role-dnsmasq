@@ -107,6 +107,54 @@ addn-hosts=/etc/dnsmasq.d/hosts/mycompany.tld.hosts
 addn-hosts=/etc/dnsmasq.d/hosts/nostate.hosts
 ```
 
+* `dnsmasq_dnsmasq_d_ethers_files_dir` default `/etc/dnsmasq.d/ethers` directory where ethers files will be created
+* `dnsmasq_dnsmasq_d_ethers_files` default `{}` create `ethers` files from variable data
+
+```yaml
+dnsmasq_dnsmasq_d_ethers_files:
+  # key name will be usead as a filename which will be saved in /etc/dnsmasq.d
+  # in this example /etc/dnsmasq.d/ethers/ethers file will be created
+  ethers:
+    state: present
+    # Check dnsmasq dhcp-host parameter to know more about format of the records
+    records:
+      - DE:AD:BE:EF:FE:ED,name,192.168.0.10
+  # it's recommended to use .ethers extension to distinguish ethers files
+  # from a main dnsmasq configuration files which usually have a .conf extension
+  another_net.ethers:
+    state: present
+    records:
+      - DE:AD:BE:EF:FE:ED,service,192.168.10.12
+  # if 'state' is set to 'absent' file will be deleted
+  legacy.ethers:
+    state: absent
+    records:
+      - "# comment - surrounding quotes are required"
+      - 11:22:33:44:55:66,legacy,192.168.10.12
+  # if no 'state' is set, default is 'present'
+  # i.e. nostate.ethers file will be created although 'state' is not set explicitly
+  nostate.ethers:
+    records:
+      - |
+        # record with a comment, no quotes required in this form
+        DE:AD:BE:EF:FE:ED,name,192.168.0.10
+      - |
+        # multiple records in one list item
+        DE:AD:BE:EF:FE:ED,name,192.168.1.8
+        11:22:33:44:55:66,another,192.168.1.9
+```
+
+* `dnsmasq_dnsmasq_d_ethers_config_ensure` default `present` valid values are `present`, `absent` if value is `absent` configuration file will be deleted  
+  `dnsmasq_dnsmasq_d_ethers_config_filename` default `/etc/dnsmasq.d/80-ethers.conf`  
+  Create configuration file at location defined in `dnsmasq_dnsmasq_d_ethers_config_filename` variable.
+  All ethers files defined in `dnsmasq_dnsmasq_d_ethers_files` with `state: present` will be referenced via `dhcp-hostsfile` parameter. For example above generated configuration file will look like
+
+```
+dhcp-hostsfile=/etc/dnsmasq.d/ethers/ethers
+dhcp-hostsfile=/etc/dnsmasq.d/hosts/another_net.ethers
+dhcp-hostsfile=/etc/dnsmasq.d/hosts/nostate.ethers
+```
+
 * `dnsmasq_default_config_dir` default `/etc/dnsmasq.d,*.conf` only load `*.conf` files from `/etc/dnsmasq.d` by default
 
 ## Dependencies

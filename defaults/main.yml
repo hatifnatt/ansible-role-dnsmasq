@@ -35,4 +35,24 @@ dnsmasq_dnsmasq_d_hosts_config_filename: /etc/dnsmasq.d/90-hosts.conf
 # addn-hosts=/etc/dnsmasq.d/hosts/mydomain.tld.hosts
 dnsmasq_dnsmasq_d_hosts_config_create: true
 
+# ethers file for static dhcp leases
+# directory where ethers files will be created
+dnsmasq_dnsmasq_d_ethers_files_dir: /etc/dnsmasq.d/ethers
+# check dnsmasq dhcp-host parameter to know more about format of the records
+# simple format is
+# MAC,name,ip-address
+# dnsmasq_dnsmasq_d_ethers:
+#   ethers:
+#     state: present
+#     records
+#       - DE:AD:BE:EF:FE:ED,name,192.168.0.10
+dnsmasq_dnsmasq_d_ethers_files: {}
+dnsmasq_dnsmasq_d_ethers_config_filename: /etc/dnsmasq.d/80-ethers.conf
+# create (or remove) configuration file at location defined in 'dnsmasq_dnsmasq_d_ethers_config_filename' variable
+# /etc/dnsmasq.d/80-ethers.conf by default
+# with all ethers files with 'state: present' referenced via 'dhcp-hostsfile' i.e.
+# dhcp-hostsfile=/etc/dnsmasq.d/ethers/ethers
+# valid values present or absent
+dnsmasq_dnsmasq_d_ethers_config_ensure: present
+
 # check Debian specific variables in vars/Debian.yml file

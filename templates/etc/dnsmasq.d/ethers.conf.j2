@@ -1,0 +1,7 @@
+{{ ansible_managed | comment }}
+
+{% for key, value in dnsmasq_dnsmasq_d_ethers_files.items() %}
+{% if value.get('state', 'present') == 'present' %}
+dhcp-hostsfile={{ [dnsmasq_dnsmasq_d_ethers_files_dir, key] | path_join }}
+{% endif %}
+{% endfor %}
