@@ -96,7 +96,7 @@ dnsmasq_dnsmasq_d_hosts_files:
         10.18.2.3 myservice.mydomain.loc
 ```
 
-* `dnsmasq_dnsmasq_d_hosts_config_create` default `true`  
+* `dnsmasq_dnsmasq_d_hosts_config_ensure` default `present` valid values are `present`, `absent` if value is `absent` configuration file will be deleted  
   `dnsmasq_dnsmasq_d_hosts_config_filename` default `/etc/dnsmasq.d/90-hosts.conf`  
   Create configuration file at location defined in `dnsmasq_dnsmasq_d_hosts_config_filename` variable.
   All hosts files defined in `dnsmasq_dnsmasq_d_hosts_files` with `state: present` will be referenced via `addn-hosts` parameter. For example above generated configuration file will look like

@@ -29,11 +29,12 @@ dnsmasq_dnsmasq_d_config_files: {}
 dnsmasq_dnsmasq_d_hosts_files_dir: /etc/dnsmasq.d/hosts
 dnsmasq_dnsmasq_d_hosts_files: {}
 dnsmasq_dnsmasq_d_hosts_config_filename: /etc/dnsmasq.d/90-hosts.conf
-# create configuration file at location defined in 'dnsmasq_dnsmasq_d_hosts_config_filename' variable
+# create (or remove) configuration file at location defined in 'dnsmasq_dnsmasq_d_hosts_config_filename' variable
 # /etc/dnsmasq.d/90-hosts.conf by default
 # with all hosts files with 'state: present' referenced via 'addn-hosts' i.e.
 # addn-hosts=/etc/dnsmasq.d/hosts/mydomain.tld.hosts
-dnsmasq_dnsmasq_d_hosts_config_create: true
+# valid values present or absent
+dnsmasq_dnsmasq_d_hosts_config_ensure: present
 
 # ethers file for static dhcp leases
 # directory where ethers files will be created
