@@ -6,10 +6,13 @@
     state: restarted
   ignore_errors: "{{ ansible_check_mode }}"
   when: dnsmasq_service_manage | bool
+  register: dnsmasq_service_restarted
 
 - name: Dnsmasq reload
   ansible.builtin.service:
     name: "{{ dnsmasq_service_name }}"
     state: reloaded
   ignore_errors: "{{ ansible_check_mode }}"
-  when: dnsmasq_service_manage | bool
+  when:
+    - dnsmasq_service_manage | bool
+    - dnsmasq_service_restarted is not defined
